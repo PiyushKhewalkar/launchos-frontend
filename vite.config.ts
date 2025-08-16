@@ -10,5 +10,23 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: false,
+    minify: 'terser',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          router: ['react-router-dom'],
+          ui: ['@radix-ui/react-progress', '@radix-ui/react-select', '@radix-ui/react-slot']
+        }
+      }
+    }
+  },
+  server: {
+    port: 3000,
+    host: true
   }
 })
