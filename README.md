@@ -1,6 +1,110 @@
-# React + TypeScript + Vite
+# LaunchOS Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern React application built with Vite, TypeScript, and Tailwind CSS.
+
+## 🚀 Features
+
+- React 19 with TypeScript
+- Vite for fast development and building
+- Tailwind CSS for styling
+- Radix UI components
+- React Router for navigation
+- Responsive design
+
+## 🛠️ Development
+
+### Prerequisites
+
+- Node.js 18+ 
+- npm or yarn
+
+### Installation
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+
+# Run linting
+npm run lint
+
+# Type checking
+npm run type-check
+```
+
+## 🚀 Deployment to Vercel
+
+### Automatic Deployment
+
+1. Connect your GitHub repository to Vercel
+2. Vercel will automatically detect this as a Vite project
+3. Deploy with default settings
+
+### Manual Deployment
+
+1. Install Vercel CLI:
+   ```bash
+   npm i -g vercel
+   ```
+
+2. Build the project:
+   ```bash
+   npm run build
+   ```
+
+3. Deploy:
+   ```bash
+   vercel --prod
+   ```
+
+### Environment Variables
+
+Create a `.env.local` file with your configuration:
+
+```bash
+VITE_API_BASE_URL=https://your-api-domain.com
+VITE_APP_NAME=LaunchOS
+```
+
+## 📁 Project Structure
+
+```
+src/
+├── components/     # Reusable UI components
+├── pages/         # Page components
+├── lib/           # Utility functions
+└── assets/        # Static assets
+```
+
+## 🔧 Configuration
+
+- **Vite**: `vite.config.ts`
+- **TypeScript**: `tsconfig.json`
+- **Tailwind**: `tailwind.config.js`
+- **Vercel**: `vercel.json`
+
+## 📦 Build Output
+
+The build process creates a `dist/` folder with:
+- Optimized and minified JavaScript bundles
+- CSS with purged unused styles
+- Static assets with proper caching headers
+
+## 🌐 Production Features
+
+- Client-side routing with fallback to index.html
+- Optimized bundle splitting
+- Asset caching headers
+- Minified and compressed output
+- TypeScript compilation
 
 Currently, two official plugins are available:
 
