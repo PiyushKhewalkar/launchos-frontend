@@ -70,6 +70,8 @@ export default function ProductForm() {
       const response = await createProduct({ productInfo })
 
       setProduct(response.product)
+
+      console.log(product)
       
       console.log("Product created successfully:", productInfo)
       navigate(`/chat/${response.product._id}`)
