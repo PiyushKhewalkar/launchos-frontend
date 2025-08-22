@@ -46,3 +46,16 @@ export const sendMessage = async(productId, userInput) => {
         throw error
     }
 }
+
+export const skipChat = async(productId) => {
+    try {
+
+        const response = await axios.get(`${BASE_URL}/api/products/chat/skip/${productId}`)
+
+        return response.data
+        
+    } catch (error) {
+        console.error("Error skipping chat", error)
+        throw error
+    }
+}

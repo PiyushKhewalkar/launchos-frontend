@@ -1,10 +1,8 @@
 import { useEffect, useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Progress } from "@/components/ui/progress"
-
-import { useParams } from "react-router-dom"
-import { getProduct, sendMessage } from "@/utils/api.js"
+import { useParams, useNavigate } from "react-router-dom"
+import { getProduct, sendMessage, skipChat } from "@/utils/api.js"
 
 import {motion, AnimatePresence} from "motion/react"
 
@@ -12,9 +10,11 @@ function ProductQnA() {
   const [messages, setMessages] = useState<any[]>([])
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const [progress, setProgress] = useState(33)
+  const [progress, setProgress] = useState(0)
 
   const [product, setProduct] = useState<any>(null)
+
+  const navigate = useNavigate()
   
   // Ref for the chat container to enable scrolling
   const chatContainerRef = useRef<HTMLDivElement>(null)
@@ -65,6 +65,61 @@ function ProductQnA() {
     }
   }
 
+  const handleSkip = async () => {
+    if (!productId) return
+    
+    setIsLoading(true)
+    try {
+      const response = await skipChat(productId)
+      
+      // Handle successful skip
+      if (response && response.message === "Chat skipped successfully") {
+        // Add success message to chat
+        const successMessage = { 
+          _id: Date.now() + 1, 
+          message: "Chat skipped successfully! Your product is now ready for campaigns.", 
+          sender: "assistant" 
+        }
+        setMessages(prev => [...prev, successMessage])
+
+        navigate(`/campaign/${productId}`)
+        
+        // Set progress to 100% since the product is completed
+        setProgress(100)
+        
+        // Update product state if needed
+        if (response.product) {
+          console.log("Product updated:", response.product)
+        }
+      }
+    } catch (error: any) {
+      console.error("Error skipping chat:", error)
+      
+      // Handle specific error cases
+      let errorMessage = "Sorry, I couldn't skip the chat. Please try again."
+      
+      if (error.response) {
+        if (error.response.status === 404) {
+          errorMessage = "Product not found."
+        } else if (error.response.status === 400) {
+          errorMessage = "Product is already completed."
+        } else if (error.response.data && error.response.data.message) {
+          errorMessage = error.response.data.message
+        }
+      }
+      
+      // Add error message to chat
+      const errorMsg = { 
+        _id: Date.now() + 1, 
+        message: errorMessage, 
+        sender: "assistant" 
+      }
+      setMessages(prev => [...prev, errorMsg])
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const { productId } = useParams()
 
   useEffect(() => {
@@ -99,7 +154,27 @@ function ProductQnA() {
 
   return (
     <div className="flex flex-col h-screen max-h-screen">
-        <Progress value={progress} />
+        <div className="w-full h-12 bg-muted/30 relative overflow-hidden">
+          <div 
+            className="absolute top-0 left-0 h-full bg-primary/20 transition-all duration-500 ease-out backdrop-blur-sm" 
+            style={{ width: `${progress}%` }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5"></div>
+          </div>
+          <div className="relative z-10 flex items-center justify-between h-full mx-5">
+            <span className="text-sm font-medium text-foreground max-w-[70%] text-wrap">
+              {product?.rawData?.name || "Product"}
+            </span>
+            <Button 
+              variant={"ghost"} 
+              className="font-normal text-muted-foreground"
+              onClick={handleSkip}
+              disabled={isLoading}
+            >
+              Skip
+            </Button>
+          </div>
+        </div>
       {/* Chat messages */}
       <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 space-y-3 bg-background">
         <AnimatePresence initial={false}>
