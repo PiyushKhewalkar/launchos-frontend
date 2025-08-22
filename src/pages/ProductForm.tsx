@@ -9,10 +9,12 @@ import { cn } from "@/lib/utils"
 import { createProduct } from "@/utils/api.js"
 
 const questions = [
-  { id: "brandName", label: "What's your brand/product name?", placeholder: "e.g. LaunchBot", type: "text", required: true },
-  { id: "problem it solves", label: "What problem does it solve?", placeholder: "Crafting winning product launch campaigns without hours of research, writing and thousands of budget", type: "textarea", required: true },
+  { id: "name", label: "What's your brand/product name?", placeholder: "e.g. LaunchBot", type: "text", required: true },
+  { id: "problemItSolves", label: "What problem does it solve?", placeholder: "Crafting winning product launch campaigns without hours of research, writing and thousands of budget", type: "textarea", required: true },
   { id: "features", label: "Top 3 features (one per line)", placeholder: "e.g.\nAutomated social posts\nLaunch tracking\nCommunity engagement", type: "textarea", required: true },
-  { id: "audience", label: "Who is your target audience?", placeholder: "e.g. SaaS founders", type: "text", required: true },
+  { id: "targetAudience", label: "Who is your target audience?", placeholder: "e.g. SaaS founders", type: "text", required: true },
+  { id: "reviews", label: "Customer reviews (optional)", placeholder: "e.g.\nJohn Doe: 'This tool changed our workflow completely!'\nJane Smith: 'Super intuitive and easy to use.'", type: "textarea", required: false },
+  { id: "faqs", label: "Frequently asked questions (optional)", placeholder: "e.g.\nQ: Does it have a free version? A: Yes, for up to 3 projects.\nQ: Can I export tasks? A: Yes, in CSV and JSON formats.", type: "textarea", required: false },
 ]
 
 export default function ProductForm() {
@@ -21,6 +23,7 @@ export default function ProductForm() {
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [error, setError] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [product, setProduct] = useState<any>(null)
 
   const currentQ = questions[step]
   const totalSteps = questions.length
@@ -41,6 +44,8 @@ export default function ProductForm() {
     } else {
       // Submit the form
       await handleSubmit()
+
+
     }
   }
 
@@ -51,19 +56,23 @@ export default function ProductForm() {
     setError("")
     
     try {
-      // Prepare the product info object
+      // Prepare the product info object - now the field IDs match the API expected names
       const productInfo = {
-        brandName: answers["brandName"],
-        problemItSolves: answers["problem it solves"],
+        name: answers["name"],
+        problemItSolves: answers["problemItSolves"],
         features: answers["features"],
-        audience: answers["audience"]
+        targetAudience: answers["targetAudience"],
+        reviews: answers["reviews"] || "",
+        faqs: answers["faqs"] || ""
       }
       
       // Call the createProduct API
-      await createProduct({ productInfo })
+      const response = await createProduct({ productInfo })
+
+      setProduct(response.product)
       
       console.log("Product created successfully:", productInfo)
-      navigate("/chat")
+      navigate(`/chat/${response.product._id}`)
     } catch (error) {
       console.error("Error creating product:", error)
       setError("Failed to create product. Please try again.")

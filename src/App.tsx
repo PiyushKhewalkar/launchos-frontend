@@ -28,7 +28,7 @@ const router = createBrowserRouter([
     )
   },
   {
-    path: "/chat",
+    path: "/chat/:productId",
     element: (
       <>
       <div>
