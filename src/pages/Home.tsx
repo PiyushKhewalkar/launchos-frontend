@@ -5,7 +5,7 @@ import ProductList from "@/components/ProductList";
 const Home = () => {
 
   return (
-    <div>
+    <div className="pb-20">
       <Greeting />
       <CampaignList />
       <div className="h-[1px] bg-muted my-5 w-[30%] mx-auto"></div>
