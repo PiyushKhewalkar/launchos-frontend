@@ -4,6 +4,8 @@ import ProductForm from './pages/ProductForm.tsx';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ProductQnA from './pages/ProductQnA.tsx';
 import CampaignForm from './pages/CampaignForm.tsx';
+import Nav from './components/Nav.tsx';
+import Tray from './components/Tray.tsx';
 
 
 const router = createBrowserRouter([
@@ -11,9 +13,11 @@ const router = createBrowserRouter([
     path: "/home",
     element: (
       <>
-      <div>
+      <div className='mx-5'>
+        <Nav />
         <Home />
       </div>
+      <Tray />
       </>
     )
   },
