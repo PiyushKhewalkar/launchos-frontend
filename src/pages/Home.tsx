@@ -1,10 +1,8 @@
-import { useNavigate } from "react-router-dom";
 import Greeting from "@/components/Greeting";
 import CampaignList from "@/components/CampaignList";
 import ProductList from "@/components/ProductList";
 
 const Home = () => {
-  const navigate = useNavigate();
 
   return (
     <div>
