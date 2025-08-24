@@ -1,6 +1,6 @@
-import UniversalHeader from "./UniversalHeader"
-import SearchBar from "./SearchBar"
-import { Button } from "./ui/button"
+import UniversalHeader from "../components/UniversalHeader"
+import SearchBar from "../components/SearchBar"
+import { Button } from "../components/ui/button"
 import redditIcon from "../assets/reddit-icon.svg"
 
 // Function to limit description to 2 lines
@@ -9,7 +9,7 @@ const truncateDescription = (description: string, maxLength: number = 60) => {
     return description.substring(0, maxLength) + "...";
 };
 
-// Smart campaign examples
+// Smart campaign examples - expanded list for the full page
 const campaigns = [
     {
         id: 1,
@@ -31,20 +31,59 @@ const campaigns = [
         description: "A modern ProductHunt alternative with better discovery algorithms and founder-friendly features. Launched successfully with 200+ products.",
         product: "ProductHunt Clone",
         status: "completed"
+    },
+    {
+        id: 4,
+        name: "SocialFlow",
+        description: "Automated social media management platform that schedules and optimizes posts across all major platforms. Increased engagement by 300% for clients.",
+        product: "SocialFlow Pro",
+        status: "active"
+    },
+    {
+        id: 5,
+        name: "EmailMaster",
+        description: "AI-powered email marketing tool that personalizes content and optimizes send times. Achieved 45% open rate improvement.",
+        product: "EmailMaster Suite",
+        status: "completed"
+    },
+    {
+        id: 6,
+        name: "InfluencerHub",
+        description: "Platform connecting brands with micro-influencers for authentic marketing campaigns. Facilitated 500+ successful partnerships.",
+        product: "InfluencerHub",
+        status: "active"
+    },
+    {
+        id: 7,
+        name: "ViralTracker",
+        description: "Real-time viral content tracking and analysis tool. Helps creators understand what makes content go viral across platforms.",
+        product: "ViralTracker Analytics",
+        status: "active"
+    },
+    {
+        id: 8,
+        name: "BrandVoice",
+        description: "AI-powered brand voice consistency tool that maintains tone across all marketing materials and communications.",
+        product: "BrandVoice AI",
+        status: "completed"
     }
 ];
 
-const CampaignList = () => {
+const Campaigns = () => {
     return (
-        <div className="space-y-5">
+        <div className="space-y-6 pb-20">
             <div className="space-y-5">
-            <UniversalHeader heading="Your Campaigns" subheading="These are your past battles. Some won hearts, some got roasted" buttonLabel="+ Create New" />
-            <SearchBar placeholder="Search campaign"/>
+                <UniversalHeader 
+                    heading="All Campaigns" 
+                    subheading="Complete overview of all your marketing campaigns and their performance" 
+                    buttonLabel="+ Create New" 
+                />
+                <SearchBar placeholder="Search campaigns"/>
             </div>
 
-            <div className="flex space-x-5 overflow-x-scroll scrollbar-hide">
+            <div className="space-y-4">
                 {campaigns.map((campaign) => (
-                    <div key={campaign.id} className="p-3 rounded-md bg-primary-foreground min-w-[90%]">
+                    <div key={campaign.id} className="p-3 rounded-md bg-primary-foreground">
                         <div className="space-y-2">
                             <div className="flex justify-between items-center">
                                 <h3 className="text-xl font-medium">{campaign.name}</h3>
@@ -67,11 +106,13 @@ const CampaignList = () => {
                 ))}
             </div>
 
-            <div className="flex justify-center">
-            <Button variant={"ghost"} className="">view all campaigns</Button>
-            </div>
+            {campaigns.length === 0 && (
+                <div className="text-center py-12">
+                    <p className="text-muted-foreground">No campaigns found. Create your first campaign to get started!</p>
+                </div>
+            )}
         </div>
     )
 }
 
-export default CampaignList
+export default Campaigns

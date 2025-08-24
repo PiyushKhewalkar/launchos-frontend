@@ -6,6 +6,9 @@ import ProductQnA from './pages/ProductQnA.tsx';
 import CampaignForm from './pages/CampaignForm.tsx';
 import Nav from './components/Nav.tsx';
 import Tray from './components/Tray.tsx';
+import Campaigns from './pages/Campaigns.tsx';
+import Products from './pages/Products.tsx';
+import CampaignDetails from './components/CampaignDetails.tsx';
 
 
 const router = createBrowserRouter([
@@ -16,6 +19,43 @@ const router = createBrowserRouter([
       <div className='mx-5'>
         <Nav />
         <Home />
+      </div>
+      <Tray />
+      </>
+    )
+  },
+  {
+    path: "/campaigns",
+    element: (
+      <>
+      <div className='mx-5'>
+        <Nav />
+        <Campaigns />
+      </div>
+      <Tray />
+      </>
+    )
+  },
+
+  {
+    path: "/campaigns/:campaignId",
+    element: (
+      <>
+      <div className='mx-5'>
+        <Nav />
+        <CampaignDetails />
+      </div>
+      <Tray />
+      </>
+    )
+  },
+  {
+    path: "/products",
+    element: (
+      <>
+      <div className='mx-5'>
+        <Nav />
+        <Products />
       </div>
       <Tray />
       </>
@@ -42,7 +82,7 @@ const router = createBrowserRouter([
     )
   },
   {
-    path: "/campaign/:productId",
+    path: "/campaigns/create/:productId",
     element: (
       <>
       <div>
