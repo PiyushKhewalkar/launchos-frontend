@@ -74,6 +74,7 @@ export default function ProductForm() {
       console.log(product)
       
       console.log("Product created successfully:", productInfo)
+      // Navigate to ProductQnA page to complete the product setup through chat
       navigate(`/chat/${response.product._id}`)
     } catch (error) {
       console.error("Error creating product:", error)

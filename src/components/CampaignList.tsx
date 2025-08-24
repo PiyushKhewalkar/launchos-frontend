@@ -2,8 +2,9 @@ import UniversalHeader from "./UniversalHeader"
 import SearchBar from "./SearchBar"
 import { Button } from "./ui/button"
 import redditIcon from "../assets/reddit-icon.svg"
-import { getCampaigns } from "../utils/api"
+import { getCampaigns, deleteCampaign } from "../utils/api"
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react"
 import {
     DropdownMenu,
@@ -11,6 +12,17 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "./ui/dropdown-menu"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "./ui/alert-dialog"
 
 // Function to limit description to 2 lines
 const truncateDescription = (description: string | undefined, maxLength: number = 60) => {
@@ -37,6 +49,7 @@ const CampaignList = () => {
     const [campaigns, setCampaigns] = useState<Campaign[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchCampaigns = async () => {
@@ -58,11 +71,31 @@ const CampaignList = () => {
         fetchCampaigns();
     }, []);
 
+    const handleDeleteCampaign = async (campaign: Campaign) => {
+        try {
+            await deleteCampaign(campaign._id);
+            // Remove the deleted campaign from the local state
+            setCampaigns(prevCampaigns => prevCampaigns.filter(c => c._id !== campaign._id));
+        } catch (error) {
+            console.error("Error deleting campaign:", error);
+            alert("Failed to delete campaign. Please try again.");
+        }
+    };
+
+    const handleCreateNewCampaign = () => {
+        navigate('/campaign-form');
+    };
+
     if (loading) {
         return (
             <div className="space-y-5">
                 <div className="space-y-5">
-                    <UniversalHeader heading="Your Campaigns" subheading="These are your past battles. Some won hearts, some got roasted" buttonLabel="+ Create New" />
+                    <UniversalHeader 
+                        heading="Your Campaigns" 
+                        subheading="These are your past battles. Some won hearts, some got roasted" 
+                        buttonLabel="+ Create New" 
+                        onButtonClick={handleCreateNewCampaign}
+                    />
                     <SearchBar placeholder="Search campaign"/>
                 </div>
                 <div className="text-center py-12">
@@ -76,7 +109,12 @@ const CampaignList = () => {
         return (
             <div className="space-y-5">
                 <div className="space-y-5">
-                    <UniversalHeader heading="Your Campaigns" subheading="These are your past battles. Some won hearts, some got roasted" buttonLabel="+ Create New" />
+                    <UniversalHeader 
+                        heading="Your Campaigns" 
+                        subheading="These are your past battles. Some won hearts, some got roasted" 
+                        buttonLabel="+ Create New" 
+                        onButtonClick={handleCreateNewCampaign}
+                    />
                     <SearchBar placeholder="Search campaign"/>
                 </div>
                 <div className="text-center py-12">
@@ -89,7 +127,12 @@ const CampaignList = () => {
     return (
         <div className="space-y-5">
             <div className="space-y-5">
-            <UniversalHeader heading="Your Campaigns" subheading="These are your past battles. Some won hearts, some got roasted" buttonLabel="+ Create New" />
+            <UniversalHeader 
+                heading="Your Campaigns" 
+                subheading="These are your past battles. Some won hearts, some got roasted" 
+                buttonLabel="+ Create New" 
+                onButtonClick={handleCreateNewCampaign}
+            />
             <SearchBar placeholder="Search campaign"/>
             </div>
 
@@ -107,7 +150,8 @@ const CampaignList = () => {
                                 <h3 className="text-xl font-medium">{campaign.name || "untitled"}</h3>
                             </div>
 
-                            <DropdownMenu>
+                            <AlertDialog>
+                                <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                                             <MoreHorizontal className="h-4 w-4" />
@@ -118,12 +162,38 @@ const CampaignList = () => {
                                             <Edit className="mr-2 h-4 w-4" />
                                             Edit
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem variant="destructive">
-                                            <Trash2 className="mr-2 h-4 w-4" />
-                                            Delete
+                                        <DropdownMenuItem variant="destructive" asChild>
+                                            <AlertDialogTrigger asChild>
+                                                <button 
+                                                    className="flex w-full items-center px-2 py-1.5 text-sm text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                                                    onClick={() => handleDeleteCampaign(campaign)}
+                                                >
+                                                    <Trash2 className="mr-2 h-4 w-4" />
+                                                    Delete
+                                                </button>
+                                            </AlertDialogTrigger>
                                         </DropdownMenuItem>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
+
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>Delete Campaign</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            Are you sure you want to delete "{campaign.name}"? This action cannot be undone.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction 
+                                            onClick={() => handleDeleteCampaign(campaign)}
+                                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                        >
+                                            Delete
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
                             </div>
                             <p className="text-muted-foreground">{truncateDescription(campaign.description)}</p>
                         </div>

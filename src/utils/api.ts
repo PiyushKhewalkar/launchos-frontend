@@ -47,6 +47,28 @@ export const getCampaign = async({campaignId}: {campaignId: string}): Promise<an
     }
 }
 
+// delete campaign
+export const deleteCampaign = async(campaignId: string): Promise<any> => {
+    try {
+        const response = await axios.delete(`${BASE_URL}/api/campaigns/${campaignId}`)
+        return response.data
+    } catch (error: any) {
+        console.error("Error deleting campaign", error)
+        throw error
+    }
+}
+
+// update campaign
+export const updateCampaign = async(campaignId: string, name: string, description: string): Promise<any> => {
+    try {
+        const response = await axios.put(`${BASE_URL}/api/campaigns/${campaignId}`, {name, description})
+        return response.data
+    } catch (error: any) {
+        console.error("Error deleting campaign", error)
+        throw error
+    }
+}
+
 // get products
 export const getProducts = async(): Promise<any> => {
     try {
@@ -68,6 +90,18 @@ export const getProduct = async(productId: string): Promise<any> => {
         return response.data
     } catch (error: any) {
         console.error("Error getting product", error)
+        throw error
+    }
+}
+
+
+// delete product
+export const deleteProduct = async(productId: string): Promise<any> => {
+    try {
+        const response = await axios.delete(`${BASE_URL}/api/products/${productId}`)
+        return response.data
+    } catch (error: any) {
+        console.error("Error deleting product", error)
         throw error
     }
 }

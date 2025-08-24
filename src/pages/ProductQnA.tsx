@@ -82,7 +82,8 @@ function ProductQnA() {
         }
         setMessages(prev => [...prev, successMessage])
 
-        navigate(`/campaign/${productId}`)
+        // Navigate to products page instead of campaign
+        navigate('/products')
         
         // Set progress to 100% since the product is completed
         setProgress(100)
@@ -150,6 +151,24 @@ function ProductQnA() {
   useEffect(() => {
     scrollToBottom()
   }, [messages])
+
+  // Watch for progress reaching 100% and navigate to products page
+  useEffect(() => {
+    if (progress >= 100) {
+      // Add completion message
+      const completionMessage = { 
+        _id: Date.now() + 1, 
+        message: "Congratulations! Your product setup is complete. You can now create campaigns for it.", 
+        sender: "assistant" 
+      }
+      setMessages(prev => [...prev, completionMessage])
+      
+      // Navigate to products page after a short delay to show the completion message
+      setTimeout(() => {
+        navigate('/products')
+      }, 2000)
+    }
+  }, [progress, navigate])
 
 
   return (

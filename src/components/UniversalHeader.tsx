@@ -4,17 +4,17 @@ interface UniversalHeaderProps {
     heading: string;
     subheading: string;
     buttonLabel: string;
+    onButtonClick?: () => void;
 }
 
-const UniversalHeader = ({ heading, subheading, buttonLabel }: UniversalHeaderProps) => {
+const UniversalHeader = ({ heading, subheading, buttonLabel, onButtonClick }: UniversalHeaderProps) => {
     return (
         <div className="space-y-2">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-medium text-wrap">{heading}</h1>
-                <Button>{buttonLabel}</Button>
+                <Button onClick={onButtonClick}>{buttonLabel}</Button>
             </div>
             <p className="text-muted-foreground">{subheading}</p>
-   
         </div>
     )
 }
