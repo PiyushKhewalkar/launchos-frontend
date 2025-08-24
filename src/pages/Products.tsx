@@ -1,74 +1,102 @@
 import UniversalHeader from "../components/UniversalHeader"
 import SearchBar from "../components/SearchBar"
 import { Button } from "../components/ui/button"
+import { getProducts } from "../utils/api"
+import { useEffect, useState } from "react"
+import { MoreHorizontal, Edit, Trash2 } from "lucide-react"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu"
 
 // Function to limit description to 2 lines
-const truncateDescription = (description: string, maxLength: number = 60) => {
+const truncateDescription = (description: string | undefined, maxLength: number = 60) => {
+    if (!description) return "No description available";
     if (description.length <= maxLength) return description;
     return description.substring(0, maxLength) + "...";
 };
 
-// Smart product examples - expanded list for the full page
-const products = [
-    {
-        id: 1,
-        name: "LaunchOS",
-        description: "LaunchOS helps you craft winning product launch campaigns for 100+ channels",
-        campaigns: 5,
-        status: "active"
-    },
-    {
-        id: 2,
-        name: "RedditOS",
-        description: "RedditOS revolutionizes community building with AI-powered moderation and engagement tools. Trusted by 1000+ communities worldwide.",
-        campaigns: 3,
-        status: "active"
-    },
-    {
-        id: 3,
-        name: "ProductHunt Clone",
-        description: "A modern ProductHunt alternative with better discovery algorithms and founder-friendly features. Launched successfully with 200+ products.",
-        campaigns: 2,
-        status: "completed"
-    },
-    {
-        id: 4,
-        name: "SocialFlow Pro",
-        description: "Automated social media management platform that schedules and optimizes posts across all major platforms. Increased engagement by 300% for clients.",
-        campaigns: 8,
-        status: "active"
-    },
-    {
-        id: 5,
-        name: "EmailMaster Suite",
-        description: "AI-powered email marketing tool that personalizes content and optimizes send times. Achieved 45% open rate improvement.",
-        campaigns: 4,
-        status: "completed"
-    },
-    {
-        id: 6,
-        name: "InfluencerHub",
-        description: "Platform connecting brands with micro-influencers for authentic marketing campaigns. Facilitated 500+ successful partnerships.",
-        campaigns: 6,
-        status: "active"
-    },
-    {
-        id: 7,
-        name: "ViralTracker Analytics",
-        description: "Real-time viral content tracking and analysis tool. Helps creators understand what makes content go viral across platforms.",
-        campaigns: 3,
-        status: "active"
-    },
-    {
-        id: 8,
-        name: "BrandVoice AI",
-        description: "AI-powered brand voice consistency tool that maintains tone across all marketing materials and communications.",
-        campaigns: 2,
-        status: "completed"
-    }
-];
+// Product interface based on API response
+interface Product {
+    _id: string;
+    rawData: {
+        name: string;
+    };
+    enhancedData: {
+        problemItSolves: string[];
+    };
+}
 
 const Products = () => {
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                setLoading(true);
+                const response = await getProducts();
+                console.log("Products API response:", response);
+                if (response && response.products && Array.isArray(response.products)) {
+                    setProducts(response.products);
+                } else if (response && Array.isArray(response)) {
+                    setProducts(response);
+                } else if (response && response.data && Array.isArray(response.data)) {
+                    setProducts(response.data);
+                } else {
+                    console.error("Unexpected response format:", response);
+                    setProducts([]);
+                }
+            } catch (err) {
+                console.error("Error fetching products:", err);
+                setError("Failed to fetch products");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="space-y-6 pb-20">
+                <div className="space-y-5">
+                    <UniversalHeader 
+                        heading="All Products" 
+                        subheading="Complete overview of all your products and their campaigns" 
+                        buttonLabel="+ Add New" 
+                    />
+                    <SearchBar placeholder="Search products"/>
+                </div>
+                <div className="text-center py-12">
+                    <p className="text-muted-foreground">Loading products...</p>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="space-y-6 pb-20">
+                <div className="space-y-5">
+                    <UniversalHeader 
+                        heading="All Products" 
+                        subheading="Complete overview of all your products and their campaigns" 
+                        buttonLabel="+ Add New" 
+                    />
+                    <SearchBar placeholder="Search products"/>
+                </div>
+                <div className="text-center py-12">
+                    <p className="text-muted-foreground">{error}</p>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-6 pb-20">
             <div className="space-y-5">
@@ -81,16 +109,32 @@ const Products = () => {
             </div>
 
             <div className="space-y-4">
-                {products.map((product) => (
-                    <div key={product.id} className="p-3 rounded-md bg-primary-foreground">
+                {Array.isArray(products) && products.map((product) => (
+                    <div key={product._id} className="p-3 rounded-md bg-primary-foreground">
                         <div className="space-y-2">
                             <div className="flex justify-between items-center">
-                                <h3 className="text-xl font-medium">{product.name}</h3>
-                                <div className="">...</div>
+                                <h3 className="text-xl font-medium">{product.rawData.name}</h3>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                            <MoreHorizontal className="h-4 w-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                        <DropdownMenuItem>
+                                            <Edit className="mr-2 h-4 w-4" />
+                                            Edit
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem variant="destructive">
+                                            <Trash2 className="mr-2 h-4 w-4" />
+                                            Delete
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                             </div>
-                            <p className="text-muted-foreground">{truncateDescription(product.description)}</p>
+                            <p className="text-muted-foreground">{truncateDescription(product.enhancedData.problemItSolves[0])}</p>
                         </div>
-                        <p className="text-muted-foreground text-sm my-5">{product.campaigns} campaigns</p>
+                        <p className="text-muted-foreground text-sm my-5">0 campaigns</p>
                         <div className="flex justify-between items-center">
                             <Button variant={"outline"} className="w-[30%]">View</Button>
                             <Button className="w-[65%]">Create Campaign</Button>
@@ -99,7 +143,7 @@ const Products = () => {
                 ))}
             </div>
 
-            {products.length === 0 && (
+            {(!products || !Array.isArray(products) || products.length === 0) && (
                 <div className="text-center py-12">
                     <p className="text-muted-foreground">No products found. Add your first product to get started!</p>
                 </div>
