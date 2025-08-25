@@ -19,9 +19,15 @@ export interface Campaign {
 
 export interface Product {
     _id: string;
-    name: string;
-    description: string;
-    // Add other product properties as needed
+    rawData: {
+        name: string;
+        description?: string;
+    };
+    enhancedData: {
+        problemItSolves: string[];
+    };
+    status: string;
+    stage: string;
 }
 
 // get campaigns
@@ -70,7 +76,7 @@ export const updateCampaign = async(campaignId: string, name: string, descriptio
 }
 
 // get products
-export const getProducts = async(): Promise<any> => {
+export const getProducts = async(): Promise<{ products: Product[] }> => {
     try {
         const response = await axios.get(`${BASE_URL}/api/products`)
         return response.data

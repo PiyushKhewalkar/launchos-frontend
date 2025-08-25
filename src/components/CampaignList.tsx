@@ -2,8 +2,8 @@ import UniversalHeader from "./UniversalHeader"
 import SearchBar from "./SearchBar"
 import { Button } from "./ui/button"
 import redditIcon from "../assets/reddit-icon.svg"
-import { getCampaigns, deleteCampaign } from "../utils/api"
-import { useEffect, useState } from "react"
+import { deleteCampaign } from "../utils/api"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react"
 import {
@@ -45,37 +45,24 @@ interface Campaign {
     updatedAt: string;
 }
 
-const CampaignList = () => {
-    const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+interface CampaignListProps {
+    campaigns: Campaign[];
+}
+
+const CampaignList = ({ campaigns }: CampaignListProps) => {
+    const [localCampaigns, setLocalCampaigns] = useState<Campaign[]>(campaigns.slice(0, 3));
     const navigate = useNavigate();
 
+    // Update local campaigns when props change
     useEffect(() => {
-        const fetchCampaigns = async () => {
-            try {
-                setLoading(true);
-                const response = await getCampaigns();
-                if (response) {
-                    // Show only first 3 campaigns for the list view
-                    setCampaigns(response.slice(0, 3));
-                }
-            } catch (err) {
-                console.error("Error fetching campaigns:", err);
-                setError("Failed to fetch campaigns");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchCampaigns();
-    }, []);
+        setLocalCampaigns(campaigns.slice(0, 3));
+    }, [campaigns]);
 
     const handleDeleteCampaign = async (campaign: Campaign) => {
         try {
             await deleteCampaign(campaign._id);
             // Remove the deleted campaign from the local state
-            setCampaigns(prevCampaigns => prevCampaigns.filter(c => c._id !== campaign._id));
+            setLocalCampaigns(prevCampaigns => prevCampaigns.filter(c => c._id !== campaign._id));
         } catch (error) {
             console.error("Error deleting campaign:", error);
             alert("Failed to delete campaign. Please try again.");
@@ -85,44 +72,6 @@ const CampaignList = () => {
     const handleCreateNewCampaign = () => {
         navigate('/campaign-form');
     };
-
-    if (loading) {
-        return (
-            <div className="space-y-5">
-                <div className="space-y-5">
-                    <UniversalHeader 
-                        heading="Your Campaigns" 
-                        subheading="These are your past battles. Some won hearts, some got roasted" 
-                        buttonLabel="+ Create New" 
-                        onButtonClick={handleCreateNewCampaign}
-                    />
-                    <SearchBar placeholder="Search campaign"/>
-                </div>
-                <div className="text-center py-12">
-                    <p className="text-muted-foreground">Loading campaigns...</p>
-                </div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="space-y-5">
-                <div className="space-y-5">
-                    <UniversalHeader 
-                        heading="Your Campaigns" 
-                        subheading="These are your past battles. Some won hearts, some got roasted" 
-                        buttonLabel="+ Create New" 
-                        onButtonClick={handleCreateNewCampaign}
-                    />
-                    <SearchBar placeholder="Search campaign"/>
-                </div>
-                <div className="text-center py-12">
-                    <p className="text-muted-foreground">{error}</p>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className="space-y-5">
@@ -137,7 +86,7 @@ const CampaignList = () => {
             </div>
 
             <div className="flex space-x-5 overflow-x-scroll scrollbar-hide">
-                {campaigns.map((campaign) => (
+                {localCampaigns.map((campaign) => (
                     <div key={campaign._id} className="p-3 rounded-md bg-primary-foreground min-w-[90%]">
                         <div className="space-y-2">
                             <div className="flex justify-between items-center">

@@ -1,8 +1,8 @@
 import UniversalHeader from "./UniversalHeader"
 import SearchBar from "./SearchBar"
 import { Button } from "./ui/button"
-import { getProducts, deleteProduct } from "../utils/api"
-import { useEffect, useState } from "react"
+import { deleteProduct } from "../utils/api"
+import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react"
 import {
@@ -39,48 +39,28 @@ interface Product {
     enhancedData: {
         problemItSolves: string[];
     };
+    status: string;
+    stage: string;
 }
 
-const ProductList = () => {
-    const [products, setProducts] = useState<Product[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+interface ProductListProps {
+    products: Product[];
+}
+
+const ProductList = ({ products }: ProductListProps) => {
+    const [localProducts, setLocalProducts] = useState<Product[]>(products.slice(0, 3));
     const navigate = useNavigate();
 
+    // Update local products when props change
     useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                setLoading(true);
-                const response = await getProducts();
-                console.log("Products API response:", response);
-                if (response && response.products && Array.isArray(response.products)) {
-                    // Show only first 3 products for the list view
-                    setProducts(response.products.slice(0, 3));
-                } else if (response && Array.isArray(response)) {
-                    // Show only first 3 products for the list view
-                    setProducts(response.slice(0, 3));
-                } else if (response && response.data && Array.isArray(response.data)) {
-                    setProducts(response.data.slice(0, 3));
-                } else {
-                    console.error("Unexpected response format:", response);
-                    setProducts([]);
-                }
-            } catch (err) {
-                console.error("Error fetching products:", err);
-                setError("Failed to fetch products");
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchProducts();
-    }, []);
+        setLocalProducts(products.slice(0, 3));
+    }, [products]);
 
     const handleDeleteProduct = async (product: Product) => {
         try {
             await deleteProduct(product._id);
             // Remove the deleted product from the local state
-            setProducts(prevProducts => prevProducts.filter(p => p._id !== product._id));
+            setLocalProducts(prevProducts => prevProducts.filter(p => p._id !== product._id));
         } catch (error) {
             console.error("Error deleting product:", error);
             alert("Failed to delete product. Please try again.");
@@ -90,44 +70,6 @@ const ProductList = () => {
     const handleAddNewProduct = () => {
         navigate('/product-form');
     };
-
-    if (loading) {
-        return (
-            <div className="space-y-5">
-                <div className="space-y-5">
-                    <UniversalHeader 
-                        heading="Your Products" 
-                        subheading="View and manage your products" 
-                        buttonLabel="+ Add New" 
-                        onButtonClick={handleAddNewProduct}
-                    />
-                    <SearchBar placeholder="Search product"/>
-                </div>
-                <div className="text-center py-12">
-                    <p className="text-muted-foreground">Loading products...</p>
-                </div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="space-y-5">
-                <div className="space-y-5">
-                    <UniversalHeader 
-                        heading="Your Products" 
-                        subheading="View and manage your products" 
-                        buttonLabel="+ Add New" 
-                        onButtonClick={handleAddNewProduct}
-                    />
-                    <SearchBar placeholder="Search product"/>
-                </div>
-                <div className="text-center py-12">
-                    <p className="text-muted-foreground">{error}</p>
-                </div>
-            </div>
-        );
-    }
 
     return (
         <div className="space-y-5">
@@ -142,7 +84,7 @@ const ProductList = () => {
             </div>
 
             <div className="flex space-x-5 overflow-x-scroll scrollbar-hide">
-                {Array.isArray(products) && products.map((product) => (
+                {Array.isArray(localProducts) && localProducts.map((product) => (
                     <div key={product._id} className="p-3 rounded-md bg-primary-foreground min-w-[90%]">
                         <div className="space-y-2">
                             <div className="flex justify-between items-center">
