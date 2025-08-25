@@ -57,8 +57,6 @@ const Products = () => {
                     setProducts(response.products);
                 } else if (response && Array.isArray(response)) {
                     setProducts(response);
-                } else if (response && response.data && Array.isArray(response.data)) {
-                    setProducts(response.data);
                 } else {
                     console.error("Unexpected response format:", response);
                     setProducts([]);

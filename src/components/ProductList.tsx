@@ -5,6 +5,7 @@ import { deleteProduct } from "../utils/api"
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react"
+import type { Product } from "@/utils/api"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -29,19 +30,6 @@ const truncateDescription = (description: string | undefined, maxLength: number 
     if (description.length <= maxLength) return description;
     return description.substring(0, maxLength) + "...";
 };
-
-// Product interface based on API response
-interface Product {
-    _id: string;
-    rawData: {
-        name: string;
-    };
-    enhancedData: {
-        problemItSolves: string[];
-    };
-    status: string;
-    stage: string;
-}
 
 interface ProductListProps {
     products: Product[];

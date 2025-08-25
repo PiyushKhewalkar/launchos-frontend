@@ -3,6 +3,7 @@ import SearchBar from "./SearchBar"
 import { Button } from "./ui/button"
 import redditIcon from "../assets/reddit-icon.svg"
 import { deleteCampaign } from "../utils/api"
+import type { Campaign } from "@/utils/api"
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { MoreHorizontal, Edit, Trash2 } from "lucide-react"
@@ -30,20 +31,6 @@ const truncateDescription = (description: string | undefined, maxLength: number 
     if (description.length <= maxLength) return description;
     return description.substring(0, maxLength) + "...";
 };
-
-// Campaign interface based on API response
-interface Campaign {
-    _id: string;
-    name: string;
-    description?: string;
-    status: string;
-    channels: string[];
-    launchType: string;
-    keywords: string[];
-    launchScripts: any[];
-    createdAt: string;
-    updatedAt: string;
-}
 
 interface CampaignListProps {
     campaigns: Campaign[];
