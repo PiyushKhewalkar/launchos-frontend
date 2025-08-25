@@ -95,7 +95,7 @@ const Onboarding = ({ products, campaigns }: OnboardingProps) => {
       title: "Add your product",
       description: "Drop in your product details (name, problem it solves, features). The more context you give, the smarter your launch campaigns will be.",
       buttonLabel: "Add Product",
-      route: "/product-form",
+      route: "/products/add",
       timeEstimate: "<5 mins"
     },
     {
@@ -103,7 +103,7 @@ const Onboarding = ({ products, campaigns }: OnboardingProps) => {
       title: "Plan your Campaign",
       description: "Pick your campaign type, add must-use keywords, and let redditOS craft scroll-stopping posts for you",
       buttonLabel: "Plan Campaign",
-      route: `/campaigns/create/${products.length > 0 ? products[0]._id : ''}`,
+      route: `/campaigns/create`,
       timeEstimate: "<2 mins"
     },
     {
@@ -175,7 +175,7 @@ const Onboarding = ({ products, campaigns }: OnboardingProps) => {
         {steps.map((step) => (
           <div
             key={step.id}
-            className="bg-card border border-border p-5 rounded-lg space-y-4 max-w-md"
+            className="bg-card border border-border p-5 rounded-md space-y-4 max-w-md"
           >
             <div className="space-y-2">
               <div className="flex items-center justify-between">

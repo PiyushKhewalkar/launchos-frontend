@@ -77,7 +77,7 @@ const Tray = () => {
                         </div>
                     </Link>
                     
-                    <Link to="/campaigns/create/:productId" className="no-underline">
+                    <Link to="/campaigns/create" className="no-underline">
                         <div className="flex flex-col items-center space-y-2 cursor-pointer hover:scale-110 transition-all duration-200">
                             <div className="rounded-full bg-primary h-10 w-10 flex items-center justify-center shadow-lg hover:shadow-xl">
                                 <svg className="h-5 w-5 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -84,7 +84,7 @@ const Products = () => {
     };
 
     const handleAddNewProduct = () => {
-        navigate('/product-form');
+        navigate('/products/add');
     };
 
     if (loading) {

@@ -3,6 +3,22 @@ import axios from "axios"
 const BASE_URL = "https://launchos-backend.onrender.com"
 
 // TypeScript interfaces
+export interface LaunchScript {
+    copy: {
+        title: string;
+        body: string;
+    };
+    publishDate: number;
+    version: number;
+    _id: string;
+}
+
+export interface ChannelScript {
+    channel: string;
+    scripts: LaunchScript[];
+    _id: string;
+}
+
 export interface Campaign {
     _id: string;
     name: string;
@@ -12,7 +28,7 @@ export interface Campaign {
     launchType: string;
     keywords: string[];
     productId: string;
-    launchScripts: any[];
+    launchScripts: ChannelScript[];
     createdAt: string;
     updatedAt: string;
 }
@@ -71,6 +87,17 @@ export const updateCampaign = async(campaignId: string, name: string, descriptio
         return response.data
     } catch (error: any) {
         console.error("Error deleting campaign", error)
+        throw error
+    }
+}
+
+// generate campaign
+export const generateCampaign = async(selectedChannels: string[], productId: string, launchType: string, keywords: string): Promise<any> => {
+    try {
+        const response = await axios.post(`${BASE_URL}/api/campaigns/${productId}`, {selectedChannels, launchType, keywords})
+        return response.data
+    } catch (error: any) {
+        console.error("Error generating campaign", error)
         throw error
     }
 }

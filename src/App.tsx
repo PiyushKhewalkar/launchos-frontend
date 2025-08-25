@@ -9,6 +9,7 @@ import Tray from './components/Tray.tsx';
 import Campaigns from './pages/Campaigns.tsx';
 import Products from './pages/Products.tsx';
 import CampaignDetails from './components/CampaignDetails.tsx';
+import PostView from './components/PostView';
 
 
 const router = createBrowserRouter([
@@ -49,6 +50,19 @@ const router = createBrowserRouter([
       </>
     )
   },
+
+  {
+    path: "/campaigns/:campaignId/:postId",
+    element: (
+      <>
+      <div className='mx-5'>
+        <Nav />
+        <PostView />
+      </div>
+      <Tray />
+      </>
+    )
+  },
   {
     path: "/products",
     element: (
@@ -62,7 +76,7 @@ const router = createBrowserRouter([
     )
   },
   {
-    path: "/product-form",
+    path: "/products/add",
     element: (
       <>
       <div>
@@ -82,7 +96,7 @@ const router = createBrowserRouter([
     )
   },
   {
-    path: "/campaigns/create/:productId",
+    path: "/campaigns/create",
     element: (
       <>
       <div>

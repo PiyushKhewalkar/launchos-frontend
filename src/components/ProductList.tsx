@@ -56,7 +56,7 @@ const ProductList = ({ products }: ProductListProps) => {
     };
 
     const handleAddNewProduct = () => {
-        navigate('/product-form');
+        navigate('/products/add');
     };
 
     return (

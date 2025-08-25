@@ -57,7 +57,7 @@ const CampaignList = ({ campaigns }: CampaignListProps) => {
     };
 
     const handleCreateNewCampaign = () => {
-        navigate('/campaign-form');
+        navigate('/campaigns/create');
     };
 
     return (
@@ -147,7 +147,7 @@ const CampaignList = ({ campaigns }: CampaignListProps) => {
                                 Launch Type: {campaign.launchType}
                             </p>
                         </div>
-                        <Button variant={"outline"} className="w-full">View Campaign</Button>
+                        <Button variant={"outline"} className="w-full" onClick={() => navigate(`/campaigns/${campaign._id}`)}>View Campaign</Button>
                     </div>
                 ))}
             </div>

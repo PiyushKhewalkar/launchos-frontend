@@ -86,7 +86,7 @@ const Campaigns = () => {
     };
 
     const handleCreateNewCampaign = () => {
-        navigate('/campaign-form');
+        navigate('/campaigns/create');
     };
 
     if (loading) {
@@ -214,7 +214,7 @@ const Campaigns = () => {
                                 Launch Type: {campaign.launchType}
                             </p>
                         </div>
-                        <Button variant={"outline"} className="w-full">View Campaign</Button>
+                        <Button variant={"outline"} className="w-full" onClick={() => navigate(`/campaigns/${campaign._id}`)}>View Campaign</Button>
                     </div>
                 ))}
             </div>
